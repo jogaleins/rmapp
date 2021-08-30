@@ -19,7 +19,7 @@ pipeline {
             sh '''
             /kaniko/executor --dockerfile `pwd`/Dockerfile \
                              --context `pwd` \
-                             --destination=jogaleins/myweb:${BUILD_NUMBER}
+                             --destination=jogaleins/rmapp:${BUILD_NUMBER}
             '''
           }
         }
@@ -30,8 +30,8 @@ pipeline {
       steps {
         container('kubectl') {
           withCredentials([file(credentialsId: 'mykubeconfig', variable: 'KUBECONFIG')]) {
-            sh 'sed -i "s/<TAG>/${BUILD_NUMBER}/" myweb.yaml'
-            sh 'kubectl apply -f myweb.yaml'
+            sh 'sed -i "s/<TAG>/${BUILD_NUMBER}/" rmapp.yaml'
+            sh 'kubectl apply -f rmapp.yaml'
           }
         }
       }
