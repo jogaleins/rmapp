@@ -1,8 +1,22 @@
-FROM python:3-alpine
-RUN python -m pip install --upgrade pip
-COPY requirements.txt /usr/src/app/
-RUN pip install --no-cache-dir -r /usr/src/app/requirements.txt
-COPY app.py /usr/src/app/
-COPY templates/index.html /usr/src/app/templates/
-EXPOSE 5000
-CMD ["python", "/usr/src/app/app.py"]
+FROM python:3.7.3-alpine3.9 as base
+
+RUN mkdir /work/
+WORKDIR /work/
+
+COPY ./src/requirements.txt /work/requirements.txt
+RUN pip install -r requirements.txt
+
+COPY ./src/ /work/
+ENV FLASK_APP=app.py
+
+###########START NEW IMAGE : DEBUGGER ###################
+FROM base as debug
+RUN pip install ptvsd
+
+WORKDIR /work/
+CMD python -m ptvsd --host 0.0.0.0 --port 5678 --wait --multiprocess -m flask run -h 0.0.0.0 -p 5000
+
+###########START NEW IMAGE: PRODUCTION ###################
+FROM base as prod
+
+CMD flask run -h 0.0.0 -p 5000
