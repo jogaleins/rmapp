@@ -1,1 +1,8 @@
+cx_Oracle
 Flask==0.10.1
+pandas
+numpy
+plotly
+dash
+dash_html_components
+dash_core_components
