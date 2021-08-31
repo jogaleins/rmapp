@@ -1,4 +1,5 @@
 import mysql.connector
+import json
 
 def connectdb():
     mydb = mysql.connector.connect(
@@ -8,31 +9,17 @@ def connectdb():
     database="rm"
     )
     return mydb
+
 def truncate():
     mydb = connectdb()
     mycursor = mydb.cursor()
     mycursor.execute("TRUNCATE TABLE `pending-packages`")
     mydb.commit()
     mydb.close()
-
-def insert():
-    mydb = connectdb()
-
-    mycursor = mydb.cursor()
-
-    sql = "INSERT INTO `pending-packages` (`id`, `package`, `system`, `baseline`, `state`, `dimstream`) VALUES (%s, %s, %s, %s, %s, %s)"
-    val = [
-    (1, 'Sideway 1633','11','232','adsfasdf','asdfasdfa')
-    ]
-
-    mycursor.executemany(sql, val)
-    mydb.commit()
-
-    print(mycursor.rowcount, "was inserted.")
-    mydb.close()
+    print('table truncated')
 
 def select():
-    print('test select')
+    print('show records')
     mydb = connectdb()
     mycursor = mydb.cursor()
 
@@ -44,10 +31,42 @@ def select():
         print(x)
 
     mydb.close()
+def insert_packages(packages):
+    try:
+        mydb = connectdb()
+        mycursor = mydb.cursor()
+        mycursor.executemany("""
+        INSERT INTO `pending-packages` (`id`, `package`, `system`, `baseline`, `state`, `dimstream`)
+        VALUES (%(ID)s, %(PACKAGE)s,%(SYSTEM)s, %(BASELINE)s,%(STATE)s, %(DIMSTREAM)s)""", packages)
+        mydb.commit()
+
+    except Error as e:
+        print('Error:', e)
+
+    finally:
+        mycursor.close()
+        mydb.close()
+        print('records inserted')
+def test():
+    mydb = connectdb()
+    mycursor = mydb.cursor()
+    data = [
+    {"name":"Tom", "gender":"male"},
+    {"name":"Jack", "gender":"male"},
+    {"name":"Lee", "gender":"male"}
+    ]
+    
+    mycursor.executemany("""
+    INSERT INTO foo (name, gender)
+    VALUES (%(name)s, %(gender)s)""", data)
+    mydb.commit()
 
 def main():
     truncate()
-    insert()
+    with open('json/pending-packages.json', 'r') as f:
+        packages = json.load(f)
+        insert_packages(packages)
+    #test()
     select()
 
 main()
