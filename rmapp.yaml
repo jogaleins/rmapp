@@ -64,7 +64,7 @@ spec:
             name: rmapp
             port:
               number: 80
-        path: /rmapp
-        pathType: Exact
+        path: /
+        pathType: Prefix
 status:
   loadBalancer: {}
