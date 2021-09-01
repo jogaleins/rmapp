@@ -1,7 +1,8 @@
 import pymysql
-from app import app
+from flask import Flask
 from flask import jsonify
 from flask import flash, request
+app = Flask(__name__)
 
 @app.route('/pending')
 def pending():
