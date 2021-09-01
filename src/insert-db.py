@@ -47,19 +47,6 @@ def insert_packages(packages):
         mycursor.close()
         mydb.close()
         print('records inserted')
-def test():
-    mydb = connectdb()
-    mycursor = mydb.cursor()
-    data = [
-    {"name":"Tom", "gender":"male"},
-    {"name":"Jack", "gender":"male"},
-    {"name":"Lee", "gender":"male"}
-    ]
-    
-    mycursor.executemany("""
-    INSERT INTO foo (name, gender)
-    VALUES (%(name)s, %(gender)s)""", data)
-    mydb.commit()
 
 def main():
     truncate()
