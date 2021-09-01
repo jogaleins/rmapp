@@ -8,7 +8,7 @@ app = Flask(__name__)
 def pending():
     try:
         conn = pymysql.connect(
-        host="10.147.18.185",
+        host="192.168.1.200",
         user="k3s",
         password="k3s_123",
         database="rm"
